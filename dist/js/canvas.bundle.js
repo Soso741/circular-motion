@@ -108,69 +108,98 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
 function _defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } }
 function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _defineProperties(Constructor.prototype, protoProps); if (staticProps) _defineProperties(Constructor, staticProps); return Constructor; }
 
-var canvas = document.querySelector('canvas');
-var c = canvas.getContext('2d');
+var canvas = document.querySelector("canvas");
+var c = canvas.getContext("2d");
 canvas.width = innerWidth;
 canvas.height = innerHeight;
 var mouse = {
   x: innerWidth / 2,
   y: innerHeight / 2
 };
-var colors = ['#2185C5', '#7ECEFD', '#FFF6E5', '#FF7F66'];
+var objects = [];
+var colors = ["#00bdff", "#4d39ce", "#088eff"];
 
 // Event Listeners
-addEventListener('mousemove', function (event) {
+addEventListener("mousemove", function (event) {
   mouse.x = event.clientX;
   mouse.y = event.clientY;
 });
-addEventListener('resize', function () {
+addEventListener("resize", function () {
   canvas.width = innerWidth;
   canvas.height = innerHeight;
   init();
 });
 
 // Objects
-var _Object = /*#__PURE__*/function () {
-  function Object(x, y, radius, color) {
-    _classCallCheck(this, Object);
+var Particle = /*#__PURE__*/function () {
+  function Particle(x, y, radius, radian, velocity, distanceFromCenter, color) {
+    _classCallCheck(this, Particle);
     this.x = x;
     this.y = y;
     this.radius = radius;
+    this.radian = radian;
+    this.velocity = velocity;
+    this.distanceFromCenter = distanceFromCenter; //generate a distance from the center once, not on every update (that would make it look weird)
+
+    this.lastMousePos = {
+      x: x,
+      y: y
+    }; // this is the last position of the mouse
+
+    // try the distanceFromCenter = {x: random , y: random}
+
     this.color = color;
   }
-  _createClass(Object, [{
+  _createClass(Particle, [{
     key: "draw",
-    value: function draw() {
+    value: function draw(lastPoint) {
       c.beginPath();
-      c.arc(this.x, this.y, this.radius, 0, Math.PI * 2, false);
-      c.fillStyle = this.color;
-      c.fill();
+      c.strokeStyle = this.color;
+      c.lineWidth = this.radius;
+      c.moveTo(lastPoint.x, lastPoint.y);
+      c.lineTo(this.x, this.y);
+      c.stroke();
       c.closePath();
     }
   }, {
     key: "update",
     value: function update() {
-      this.draw();
+      var lastPoint = {
+        x: this.x,
+        y: this.y
+      };
+
+      //move points over time
+      this.radian += this.velocity;
+
+      //drag effect (before setting the X and Y on line 69-70)
+      this.lastMousePos.x += (mouse.x - this.lastMousePos.x) * 0.05;
+      this.lastMousePos.y += (mouse.y - this.lastMousePos.y) * 0.05;
+
+      //pass the previous value of X instead of innerWidth / 2
+      this.x = this.lastMousePos.x + Math.cos(this.radian) * this.distanceFromCenter;
+      this.y = this.lastMousePos.y + Math.sin(this.radian) * this.distanceFromCenter;
+      this.draw(lastPoint);
     }
   }]);
-  return Object;
-}(); // Implementation
-var objects;
+  return Particle;
+}();
 function init() {
-  objects = [];
-  for (var i = 0; i < 400; i++) {
-    // objects.push()
+  for (var i = 0; i < 150; i++) {
+    objects.push(new Particle(innerWidth / 2, innerHeight / 2, (0,_utils__WEBPACK_IMPORTED_MODULE_0__.randomIntFromRange)(2, 5), (0,_utils__WEBPACK_IMPORTED_MODULE_0__.randomIntFromRange)(Math.random(), Math.PI * 2),
+    //get a number between random and 2pi radians for the radian property
+    Math.random() * 0.07, (0,_utils__WEBPACK_IMPORTED_MODULE_0__.randomIntFromRange)(50, 320), (0,_utils__WEBPACK_IMPORTED_MODULE_0__.randomColor)(colors)));
   }
 }
 
 // Animation Loop
 function animate() {
   requestAnimationFrame(animate);
-  c.clearRect(0, 0, canvas.width, canvas.height);
-  c.fillText('HTML CANVAS BOILERPLATE', mouse.x, mouse.y);
-  // objects.forEach(object => {
-  //  object.update()
-  // })
+  c.fillStyle = "rgba(255,255,255,0.075)";
+  c.fillRect(0, 0, canvas.width, canvas.height);
+  objects.forEach(function (object) {
+    object.update();
+  });
 }
 init();
 animate();
