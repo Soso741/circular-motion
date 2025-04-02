@@ -73,14 +73,14 @@ class Particle {
 }
 
 function init() {
-  for (let i = 0; i < 150; i++) {
+  for (let i = 0; i < 200; i++) {
     objects.push(
       new Particle(
         innerWidth / 2,
         innerHeight / 2,
         randomIntFromRange(2, 5),
-        randomIntFromRange(Math.random(), Math.PI * 2), //get a number between random and 2pi radians for the radian property
-        Math.random() * 0.07,
+        Math.random() * Math.PI * 2, //get a number between random and 2pi radians for the radian property
+        0.048,
         randomIntFromRange(50, 320),
         randomColor(colors)
       )

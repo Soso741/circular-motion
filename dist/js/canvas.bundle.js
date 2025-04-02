@@ -185,10 +185,10 @@ var Particle = /*#__PURE__*/function () {
   return Particle;
 }();
 function init() {
-  for (var i = 0; i < 150; i++) {
-    objects.push(new Particle(innerWidth / 2, innerHeight / 2, (0,_utils__WEBPACK_IMPORTED_MODULE_0__.randomIntFromRange)(2, 5), (0,_utils__WEBPACK_IMPORTED_MODULE_0__.randomIntFromRange)(Math.random(), Math.PI * 2),
+  for (var i = 0; i < 200; i++) {
+    objects.push(new Particle(innerWidth / 2, innerHeight / 2, (0,_utils__WEBPACK_IMPORTED_MODULE_0__.randomIntFromRange)(2, 5), Math.random() * Math.PI * 2,
     //get a number between random and 2pi radians for the radian property
-    Math.random() * 0.07, (0,_utils__WEBPACK_IMPORTED_MODULE_0__.randomIntFromRange)(50, 320), (0,_utils__WEBPACK_IMPORTED_MODULE_0__.randomColor)(colors)));
+    0.048, (0,_utils__WEBPACK_IMPORTED_MODULE_0__.randomIntFromRange)(50, 320), (0,_utils__WEBPACK_IMPORTED_MODULE_0__.randomColor)(colors)));
   }
 }
 
